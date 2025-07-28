@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duplicate Detector Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite linear;
+        }
+
+        .shape:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 120px; height: 120px; left: 20%; animation-delay: 2s; }
+        .shape:nth-child(3) { width: 100px; height: 100px; left: 35%; animation-delay: 4s; }
+        .shape:nth-child(4) { width: 150px; height: 150px; left: 50%; animation-delay: 6s; }
+        .shape:nth-child(5) { width: 90px; height: 90px; left: 65%; animation-delay: 8s; }
+        .shape:nth-child(6) { width: 110px; height: 110px; left: 80%; animation-delay: 10s; }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .header h1::before {
+            content: '🔍';
+            font-size: 4rem;
+            position: absolute;
+            left: -5rem;
+            top: -0.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            position: relative;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .upload-section {
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            transform: translateY(-5px);
+        }
+
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(102, 126, 234, 0.2));
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            animation: float-icon 3s ease-in-out infinite;
+        }
+
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .upload-text h3 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .upload-text p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .upload-btn:hover::before {
+            left: 100%;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-section {
+            display: none;
+            padding: 0 3rem 3rem;
+        }
+
+        .results-section.show {
+            display: block;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+            color: #667eea;
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .result-count {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-left: auto;
+            font-size: 1.1rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .error-alert {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            padding: 0 3rem 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .header h1::before { display: none; }
+            .upload-section { padding: 2rem 1rem; }
+            .feature-grid { padding: 0 1rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Duplicate Detector Pro</h1>
+            <p>Instantly identify duplicate rows and columns in your data files with our advanced AI-powered analysis engine</p>
+        </div>
+
+        <div class="main-card">
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-section">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">
+                            <h3>Drop your file here or click to browse</h3>
+                            <p>Supports CSV, Excel, and other data formats</p>
+                            <input type="file" name="file" class="file-input" id="fileInput" required>
+                            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-plus"></i> Choose File
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <h4>Analyzing your data...</h4>
+                    <p>Please wait while we scan for duplicates</p>
+                </div>
+            </form>
+
+            <!-- Error Display -->
+            {% if error %}
+            <div class="upload-section">
+                <div class="error-alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Error:</strong> {{ error }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Results Section -->
+            {% if row_count is not none or col_count is not none %}
+            <div class="results-section show">
+                {% if row_count is not none %}
+                <div class="result-card">
+                    <div class="result-header">
+                        <i class="fas fa-table result-icon"></i>
+                        <h3 class="result-title">Duplicate Rows</h3>
+                        <div class="result-count">{{ row_count }} Found</div>
+                    </div>
+                    <div class="result-content">
+                        {{ duplicate_rows|safe }}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if col_count is not none %}
+                <div class="result-card">
+                    <div class="result-header">
+                        <i class="fas fa-columns result-icon"></i>
+                        <h3 class="result-title">Duplicate Columns</h3>
+                        <div class="result-count">{{ col_count }} Found</div>
+                    </div>
+                    <div class="result-content">
+                        {{ duplicate_columns|safe }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Features Section -->
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Lightning Fast</h4>
+                    <p>Process large datasets in seconds with our optimized algorithms</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Secure & Private</h4>
+                    <p>Your data never leaves our secure servers and is automatically deleted after processing</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-bar"></i>
+                    <h4>Detailed Reports</h4>
+                    <p>Get comprehensive insights about your data quality and duplicate patterns</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadForm = document.getElementById('uploadForm');
+        const loading = document.getElementById('loading');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop area when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            uploadArea.classList.remove('dragover');
+        }
+
+        // Handle dropped files
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileName(files[0].name);
+                // Auto-submit after file drop
+                setTimeout(() => {
+                    uploadForm.submit();
+                    showLoading();
+                }, 500);
+            }
+        }
+
+        // Handle file input change
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                updateFileName(this.files[0].name);
+                // Auto-submit when file is selected
+                setTimeout(() => {
+                    uploadForm.submit();
+                    showLoading();
+                }, 500);
+            }
+        });
+
+        function updateFileName(name) {
+            const uploadText = document.querySelector('.upload-text h3');
+            uploadText.innerHTML = `<i class="fas fa-file-alt"></i> ${name}`;
+            uploadArea.style.borderColor = '#28a745';
+            uploadArea.style.background = 'linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(102, 126, 234, 0.1))';
+        }
+
+        function showLoading() {
+            document.querySelector('.upload-section').style.display = 'none';
+            loading.classList.add('show');
+        }
+
+        // Add click to upload area
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        // Animate feature cards on hover
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.05)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add smooth scrolling animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe feature cards for animation
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
