@@ -1,0 +1,29 @@
+2025-07-28 22:16:59,912 - __main__ - INFO - Starting Duplicate Detector application...
+2025-07-28 22:16:59,912 - __main__ - INFO - Upload folder: uploads
+2025-07-28 22:16:59,912 - __main__ - INFO - Max file size: 50MB
+2025-07-28 22:16:59,912 - __main__ - INFO - Supported formats: {'parquet', 'csv', 'xlsx', 'tsv', 'xls', 'pdf', 'json'}
+2025-07-28 22:19:41,262 - __main__ - INFO - Starting Duplicate Detector application...
+2025-07-28 22:19:41,263 - __main__ - INFO - Upload folder: uploads
+2025-07-28 22:19:41,263 - __main__ - INFO - Max file size: 50MB
+2025-07-28 22:19:41,263 - __main__ - INFO - Supported formats: {'json', 'parquet', 'tsv', 'csv', 'xlsx', 'pdf', 'xls'}
+2025-07-28 22:21:45,382 - __main__ - INFO - Starting Duplicate Detector application...
+2025-07-28 22:21:45,382 - __main__ - INFO - Upload folder: uploads
+2025-07-28 22:21:45,383 - __main__ - INFO - Max file size: 50MB
+2025-07-28 22:21:45,383 - __main__ - INFO - Supported formats: {'csv', 'json', 'parquet', 'pdf', 'xlsx', 'tsv', 'xls'}
+2025-07-28 22:21:45,411 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.4.189:5050
+2025-07-28 22:21:45,411 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-07-28 22:21:45,412 - werkzeug - INFO -  * Restarting with stat
+2025-07-28 22:21:45,640 - __main__ - INFO - Starting Duplicate Detector application...
+2025-07-28 22:21:45,640 - __main__ - INFO - Upload folder: uploads
+2025-07-28 22:21:45,640 - __main__ - INFO - Max file size: 50MB
+2025-07-28 22:21:45,640 - __main__ - INFO - Supported formats: {'xls', 'xlsx', 'tsv', 'json', 'pdf', 'csv', 'parquet'}
+2025-07-28 22:21:45,652 - werkzeug - WARNING -  * Debugger is active!
+2025-07-28 22:21:45,657 - werkzeug - INFO -  * Debugger PIN: 120-394-785
+2025-07-28 22:22:07,067 - werkzeug - INFO - 127.0.0.1 - - [28/Jul/2025 22:22:07] "GET / HTTP/1.1" 200 -
+2025-07-28 22:22:07,561 - werkzeug - INFO - 127.0.0.1 - - [28/Jul/2025 22:22:07] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-28 22:22:18,619 - __main__ - INFO - File uploaded: test.csv, Size: 96 bytes
+2025-07-28 22:22:18,646 - __main__ - INFO - Successfully loaded file: test.csv, Shape: (5, 3)
+2025-07-28 22:22:18,653 - werkzeug - INFO - 127.0.0.1 - - [28/Jul/2025 22:22:18] "POST / HTTP/1.1" 200 -
