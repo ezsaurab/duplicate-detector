@@ -16,6 +16,7 @@ pandas==2.3.1
 pdfplumber==3.4.2
 pillow==11.3.0
 pyparsing==3.2.3
+pypdf2==4.30.0
 python-dateutil==2.9.0.post0
 pytz==2025.2
 six==1.17.0
